@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'screens/login_page.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const PatiPaylasApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class PatiPaylasApp extends StatelessWidget {
+  const PatiPaylasApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'PatiPaylaş 🐾',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
       ),
+      home: const LoginPage(),   // 🔥 ARTIK BURADA LOGIN AÇILIYOR
     );
   }
 }
