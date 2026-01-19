@@ -1,0 +1,31 @@
+name: flutter_application_2
+description: A new Flutter project.
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  http: ^1.2.1
+  shared_preferences: ^2.5.3
+  image_picker: ^1.0.7
+  file_saver: ^0.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0  # <-- BURAYA EKLENDİ, DOĞRU YERİ BURA!
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/poli.jpeg

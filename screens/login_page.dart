@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../api_service.dart';
 import '../pages/home_page.dart';
 import 'register_page.dart';
@@ -22,7 +21,6 @@ class _LoginPageState extends State<LoginPage> {
     final username = usernameCtrl.text.trim();
     final password = passwordCtrl.text.trim();
 
-    // 1. Boş alan kontrolü
     if (username.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Kullanıcı adı ve şifre gerekli!")),
@@ -32,30 +30,23 @@ class _LoginPageState extends State<LoginPage> {
 
     setState(() => isLoading = true);
 
-    // 2. Giriş isteği
     final result = await ApiService.login(username, password);
 
-    // ⭐ KRİTİK KONTROL 1: İstek bitince sayfa hala açık mı?
     if (!mounted) return;
 
     setState(() => isLoading = false);
 
     if (result) {
-      // 3. Kullanıcı adını kaydetme
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString("username", username);
 
-      // ⭐ KRİTİK KONTROL 2: Kayıt işleminden sonra sayfa hala açık mı?
-      // (Burası eksikti, bu yüzden hata veriyordu)
       if (!mounted) return;
 
-      // 4. Ana sayfaya geçiş
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomePage()),
       );
     } else {
-      // Hata mesajı
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Giriş başarısız! Bilgileri kontrol et.")),
       );
@@ -71,12 +62,11 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Center( // İçeriği ortalamak için Center ekledim, daha şık durur
-          child: SingleChildScrollView( // Klavye açılınca taşma olmasın diye
+        child: Center(
+          child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // İsteğe bağlı logo veya ikon
                 const Icon(Icons.pets, size: 80, color: Colors.deepPurple),
                 const SizedBox(height: 20),
                 
@@ -84,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                   controller: usernameCtrl,
                   decoration: const InputDecoration(
                     labelText: "Kullanıcı Adı",
-                    border: OutlineInputBorder(), // Kutulu tasarım
+                    border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.person),
                   ),
                 ),
@@ -103,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
                 isLoading
                     ? const CircularProgressIndicator()
                     : SizedBox(
-                        width: double.infinity, // Butonu genişlet
+                        width: double.infinity,
                         height: 50,
                         child: ElevatedButton(
                           onPressed: loginUser,

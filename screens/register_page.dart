@@ -12,24 +12,26 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController usernameCtrl = TextEditingController();
   final TextEditingController passwordCtrl = TextEditingController();
+  final TextEditingController emailCtrl = TextEditingController(); 
 
   bool isLoading = false;
 
   Future<void> registerUser() async {
     final username = usernameCtrl.text.trim();
     final password = passwordCtrl.text.trim();
+    final email = emailCtrl.text.trim();
 
-    if (username.isEmpty || password.isEmpty) {
+    if (username.isEmpty || password.isEmpty || email.isEmpty) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Kullanıcı adı ve şifre gerekli!")),
+        const SnackBar(content: Text("Tüm alanları doldurun!")),
       );
       return;
     }
 
     setState(() => isLoading = true);
 
-    final result = await ApiService.register(username, password);
+    final result = await ApiService.register(username, password, email);
 
     if (!mounted) return;
     setState(() => isLoading = false);
@@ -38,14 +40,13 @@ class _RegisterPageState extends State<RegisterPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Kayıt başarılı! Giriş yapabilirsiniz.")),
       );
-
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const LoginPage()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Kayıt başarısız oldu.")),
+        const SnackBar(content: Text("Kayıt başarısız oldu (Kullanıcı adı alınmış olabilir).")),
       );
     }
   }
@@ -59,28 +60,61 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: usernameCtrl,
-              decoration: const InputDecoration(labelText: "Kullanıcı Adı"),
-            ),
-            TextField(
-              controller: passwordCtrl,
-              decoration: const InputDecoration(labelText: "Şifre"),
-              obscureText: true,
-            ),
-            const SizedBox(height: 20),
-            isLoading
-                ? const CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: registerUser,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple[300],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const Icon(Icons.pets, size: 80, color: Colors.deepPurple),
+              const SizedBox(height: 20),
+              
+              TextField(
+                controller: usernameCtrl,
+                decoration: const InputDecoration(
+                  labelText: "Kullanıcı Adı",
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.person),
+                ),
+              ),
+              const SizedBox(height: 16),
+              
+              TextField(
+                controller: emailCtrl,
+                decoration: const InputDecoration(
+                  labelText: "E-Posta",
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.email),
+                ),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 16),
+
+              TextField(
+                controller: passwordCtrl,
+                decoration: const InputDecoration(
+                  labelText: "Şifre",
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock),
+                ),
+                obscureText: true,
+              ),
+              
+              const SizedBox(height: 24),
+
+              isLoading
+                  ? const CircularProgressIndicator()
+                  : SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: registerUser,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepPurple[300],
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text("Kayıt Ol"),
+                      ),
                     ),
-                    child: const Text("Kayıt Ol"),
-                  ),
-          ],
+            ],
+          ),
         ),
       ),
     );
